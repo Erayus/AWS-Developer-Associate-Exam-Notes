@@ -1,1 +1,1 @@
-# AWS-Tips-And-Scripts
+# AWS Developer Associate Exam Notes
