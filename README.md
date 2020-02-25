@@ -40,4 +40,59 @@ Domain|% of Examinations
 - Write code that can be monitored. 
 - Perform root cause analysis on faults found in testing or production
 
+## Notes
+---
+### **AWS Fundamentals**
+---
+#### EC2
+#### IAM
+#### ELB
+#### ASG
+#### EBS
+#### Route53
+#### RDS
+#### Elastic Cache
+#### VPC
+#### Amazon S3
+---
+### **Deployment**
+---
+#### CodeCommit
+#### CodePipeline
+#### CodeBuild
+#### CodeDeploy
+#### AWS Elastic Beanstalk
+#### SAM
+#### Docker in AWS (ECS, ECR & Fargate)
+---
+
+### **Development**
+---
+#### Lambda
+#### AWS Step Functions && AWS SWF (Legacy)
+#### DynamoDB
+#### API Gateway & Cognito
+#### SQS
+#### SNS
+#### Kinesis
+#### AWS CLI, IAM Roles & Policies
+---
+
+### **Monitoring**
+---
+#### CloudWatch
+#### AWS X-Ray
+#### AWS CloudTrail
+---
+
+### **Security**
+---
+#### KMS
+#### SSM Parameter Store
+#### IAM Best Practices
+
+
+
+
+
 
