@@ -45,6 +45,37 @@ Domain|% of Examinations
 ### **AWS Fundamentals**
 ---
 #### EC2
+- **SSH:**
+  - Programmatic way to access your instance (port 22 needs to be open in a security group).
+  - .pem file's permissions are required to change before being used as key to access the instance.
+- **Instances Metadata**: SSH into intance and then `curl http://169.254.169.254/latest/meta-data/`
+- **User data section**: Input scripts to this section to setup the instance when it's initiated (e.g update packages, install web servers...)
+- **Launch Types:**
+  - ***On Demand***: short workload, predictable pricing, pay as you go. 
+  - ***Reserved Instances***: long workloads (>= 1 year), pay upfront.
+  - ***Convertible Reserved Instances***: long workloads with flexible instances.
+  - ***Schedule Reserved Instances***: launch within time window you reserve.
+  - ***Spot Instances***: short workloads, for cheap, can lose instances.
+  - ***Dedicated Instances***: no other customers will share your hardware, expensive.
+  - ***Dedicated Hosts***: book an entire physical server, control instance placement, highly expensive. 
+- **Security group:**
+  - Act as a fireware that controls traffic that goes into (inboud) and goes out (outbound) the instance.
+  - Can be attached to multiple instances.
+  - By default, all **inboud** is *blocked*, **outbound** is *authorized*.
+  - **SG Referencing**: SGs can be used to authorize access between instances.
+- **Billing:**
+  - Billed by seconds
+  - Billed for storage, data transfer, fixed IP public address, load balancing.
+- **Custom AMI**:
+  - Pre-installed packages needed.
+  - Faster boot time (no need for long ec2 user data at boot time).
+  - Machine comes configured with monitoring / enterprise software.
+  - Security concerns - control over the machines in the network.
+  - Control of maintenance and updates of AMIs over time.
+  - Active Directory Integration out of the box.
+  - *Installing your app ahead of time (for faster deploys when auto-scaling)*
+  - *Built for a specific AWS region*
+- **CPU Credits:** allow your instance to burst, credits are lost when bursting and earned when not bursting.  
 #### IAM
 #### ELB
 #### ASG
