@@ -77,6 +77,12 @@ Domain|% of Examinations
   - *Built for a specific AWS region*
 - **CPU Credits:** allow your instance to burst, credits are lost when bursting and earned when not bursting.  
 #### IAM
+- Group > User > Role > Policy.
+- Use *Role* that has the only neccessary policies to give permissions to EC2 instances.
+- For the on-premise appliations that needs permissions to use AWS Resources, create a dedicated user for it and store the credentials into environment variables (or use AWS CLI `aws configure` to store he credentials).
+- You can retrieve the role name attached to your EC2 instance using the metadata service but not the policy itself.
+- Use *STS decode-authorization-message* API to decode the cryptic error message.
+- 
 #### ELB
 #### ASG
 #### EBS
