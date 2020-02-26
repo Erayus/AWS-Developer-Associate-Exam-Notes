@@ -144,6 +144,28 @@ Domain|% of Examinations
   - IAM roles attached to an ASG will get assigned to EC2 instances.
   - ASG are free. You pay for the underlying resourcse being launched.
 #### EBS
+- Network drive
+  - Uses the network to communicate with teh instance, which means there might be a bit of latency.
+  - Can be detached from an EC2 instance and attached to to another one quickly.
+- Locked to an AZ
+  - An EBS Volume in us-east-1a cannot be attached to us-east-1b
+  - To move a volume accross, you first need to snapshot it.
+- Have a provisioned capacity (size in GBs, and IOPS)
+  - You get billed for all the provisioned capacity.
+  - You can increase the capcity of the drive over time.
+- Types:
+  - GP2(SSD): General purpose SSD volume that balances price and performance for a wide variety of workloads.
+  - IOI (SSD): Highest-performance SSD volume for mission-critical low-latency or high-throughput workloads.
+  - STI (HDD): Low cost HDD volume designed for frequently accessed, throughput-intensive workloads.
+  - SCI (HDD): Lowest cost HDD volume designed for less frequently accessed workloads.
+- Snapshots:
+  - Used to backup EBS Volumes.
+  - Only tak the actual space of the blocks on the volume.
+    - If you snapshot a 100GB drive that only has 5 GB of data, then your EBS snapshot will only be 5GB.
+- Extra notes:
+  - Can only be attached to only one instance at a time.
+  - Migrating across AZ: Snapshot -> recreate in a different AZ.
+  - Root EBS Volume of instances get terminated by default if the EC2 instance gets terminated (You can disable that). 
 #### Route53
 #### RDS
 #### Elastic Cache
