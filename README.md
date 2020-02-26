@@ -82,9 +82,67 @@ Domain|% of Examinations
 - For the on-premise appliations that needs permissions to use AWS Resources, create a dedicated user for it and store the credentials into environment variables (or use AWS CLI `aws configure` to store he credentials).
 - You can retrieve the role name attached to your EC2 instance using the metadata service but not the policy itself.
 - Use *STS decode-authorization-message* API to decode the cryptic error message.
-- 
+
 #### ELB
+- Load balancers are servers that forward internet traffic to multiple servers (EC2 Instances) downstream.
+- Why?:
+  - Spread load across multiple downstream instances.
+  - Expose a single point of access (DNS) to your application.
+  - Seamlessly handle failures of downstream instances: LB does regular health checks to your instances and stop sending traffic to unhealthy instances.
+  - Provide SSL Termination (HTTPS) for your website:
+  - Enforce stickness with cookies: allows the user to talk to the same instance.
+  - High availability cross zones.
+  - Separate public traffic from private traffic.
+- Types:
+  - Application Load Balancer (v2 - new generation)
+    - Load balance to multiple HTTP applications across machines (target groups).
+    - Load balance to multiple applications on the same machine (ex: containers).
+    - Load balance based on route in URL.
+    - Load balance based on hostname in URL
+    - The application servers don't see the IP of the client directly
+      - The true IP of the client is inserted in the header **X-Forwarded-For**
+      - We can also get Port (X-Forwarded-Port) and Proto (X-Forwarded-Proto).
+  - Network load balancers (Layer 4) allow to do:
+    - Forward TCP traffic to your instances.
+    - Handle millions of request per seconds.
+    - Support for static IP or elastic IP addresses.
+    - Less latency ~ 100 ms (vs 400ms for ALB)
+    - Mostly used for extreme performance.
+- Good to know:
+  - Any LB has a static host name. Do not resolve and use underlying IP.
+  - LBs can scale but not instantaneously - contact AWS for a "warm-up".
+  - NLB directly see the client IP.
+  - 4xx errors are client induced errors.
+  - 5xx erros are application induced errors.
+    - Load Balancer Errors 503 meants at capacity or no registered target.
+  - If the LB can't connect to your application, check your security groups.
 #### ASG
+- What:
+  - Scale out (add EC2 instances) to match an increased load.
+  - Scale in (remove EC2 instances) to match a decreased load.
+  - Ensure we have a minimum and a maximum number of machines running.
+  - Automatically Register new instances to a load balancer.
+- Launch confguration:
+  - An "instruction" the ASG use to create the instances.
+  - Details:
+    - AMI + Instance Type
+    - EC2 User Data
+    - EBS Volumes
+    - Security Groups
+    - SSH Key Pairs
+- Auto Scaling Alarms:
+  - Use CloudWatch Alarms.
+  - An alarm monitors a metric (such as Average CPU).
+  - Metrics are computed for the overall ASG instances.
+- Auto Scaling Custom Metric
+  - We can auto scale based on a custom metric (ex: number  of connected users).
+    1. Send custom metric from application on EC2 to CloudWatch (PutMetric API).
+    2. Create CloudWatch alarm to react to low/high values.
+    3. Use the CloudWatch alarm as the scaling policy for ASG.
+- Extra notes:
+  - Update ASG by providing a new launch configuration.
+  - IAM roles attached to an ASG will get assigned to EC2 instances.
+  - ASG are free. You pay for the underlying resourcse being launched.
 #### EBS
 #### Route53
 #### RDS
