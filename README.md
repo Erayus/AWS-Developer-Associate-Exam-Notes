@@ -1,4 +1,4 @@
-# AWS Developer Associate Exam Notes
+# AWS Developer Associate 2020 Exam Notes
 
 ## Table of contents: 
   - [Exam Domain and % of Examination](#exam-domain-and--of-examination)
