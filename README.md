@@ -217,8 +217,12 @@ Domain|% of Examinations
 - Integration with CloudFormation.
 - Store Hierarchy
 - CLI
-  - Get undecrypted params: `aws ssm get-parameters --names [parameter name/path]`
-  - Get dencrypted params: `aws ssm get-parameters --names [parameter name/path] --with-decryption` 
+  - By name:
+    - Get undecrypted params: `aws ssm get-parameters --names [parameter's name]`
+    - Get dencrypted params: `aws ssm get-parameters --names [parameter's name] --with-decryption` 
+  - By path:
+    - One level: `aws ssm get-parameters-by-path --path [path created in SSM]`
+    - Recursive: `aws ssm get-parameters-by-path --path [path created in SSM] --recursive` 
 #### IAM Best Practices
 
 
