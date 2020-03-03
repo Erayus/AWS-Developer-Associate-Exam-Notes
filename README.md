@@ -205,7 +205,20 @@ Domain|% of Examinations
 ### **Security**
 ---
 #### KMS
+- Limit of data to be encrypted: 4KB.
+- If data > 4KB, use Envelope Encryptionv === Encryption SDK === GenerateDataKey API.
 #### SSM Parameter Store
+- Secure storage for configuration and secrets.
+- Optional Seamless Encryption using KMS.
+- Severless, scalable, durable, easy SDK free.
+- Version tracking of configurations/secrets.
+- Configuration management using path & IAM.
+- Notifications with CloudWatch Events.
+- Integration with CloudFormation.
+- Store Hierarchy
+- CLI
+  - Get undecrypted params: `aws ssm get-parameters --names [parameter name/path]`
+  - Get dencrypted params: `aws ssm get-parameters --names [parameter name/path] --with-decryption` 
 #### IAM Best Practices
 
 
