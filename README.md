@@ -143,29 +143,43 @@ Domain|% of Examinations
   - Update ASG by providing a new launch configuration.
   - IAM roles attached to an ASG will get assigned to EC2 instances.
   - ASG are free. You pay for the underlying resourcse being launched.
+
+
 #### EBS
 - Network drive
   - Uses the network to communicate with teh instance, which means there might be a bit of latency.
   - Can be detached from an EC2 instance and attached to to another one quickly.
+
+
 - Locked to an AZ
   - An EBS Volume in us-east-1a cannot be attached to us-east-1b
   - To move a volume accross, you first need to snapshot it.
+
+
 - Have a provisioned capacity (size in GBs, and IOPS)
   - You get billed for all the provisioned capacity.
   - You can increase the capcity of the drive over time.
+
+
 - Types:
   - GP2(SSD): General purpose SSD volume that balances price and performance for a wide variety of workloads.
   - IOI (SSD): Highest-performance SSD volume for mission-critical low-latency or high-throughput workloads.
   - STI (HDD): Low cost HDD volume designed for frequently accessed, throughput-intensive workloads.
   - SCI (HDD): Lowest cost HDD volume designed for less frequently accessed workloads.
+
+
 - Snapshots:
   - Used to backup EBS Volumes.
   - Only tak the actual space of the blocks on the volume.
     - If you snapshot a 100GB drive that only has 5 GB of data, then your EBS snapshot will only be 5GB.
+
+
 - Extra notes:
   - Can only be attached to only one instance at a time.
   - Migrating across AZ: Snapshot -> recreate in a different AZ.
   - Root EBS Volume of instances get terminated by default if the EC2 instance gets terminated (You can disable that). 
+
+
 #### Route53
 #### RDS
 #### Elastic Cache
@@ -216,6 +230,7 @@ Domain|% of Examinations
 - Notifications with CloudWatch Events.
 - Integration with CloudFormation.
 - Store Hierarchy
+
 - CLI
   - By name:
     - Get undecrypted params: `aws ssm get-parameters --names [parameter's name]`
@@ -223,7 +238,31 @@ Domain|% of Examinations
   - By path:
     - One level: `aws ssm get-parameters-by-path --path [path created in SSM]`
     - Recursive: `aws ssm get-parameters-by-path --path [path created in SSM] --recursive` 
+
+
 #### IAM Best Practices
+- General:
+  - Never use Root Credentials, enable MFA for Root Account.
+  - Grant Least Privlege.
+    - Each Group / Use / Role should only have the minimum level of permission it needs.
+    - Never grant a policy with "*" access to a service.
+    - Monitor API calls made by a user in CloudTrail (especially Denied ones).
+  - Never store IAM key credentials on any machine but a personal computer or on-premise server.
+  - On premise server best practice is to call STS to obtain temporary security credentials.
+
+
+- IAM Roles:
+  - EC2/Lambda/ECS tasks/CodeBuild should have its own service roles.
+  - 1 role per application/lambda/service (do not reuse role).
+  - Create least-privledged role for any service that requires it.
+
+
+- Cross Account Access:
+  - Define an IAM Role for another account to access.
+  - Define which accounts can access this IAM. 
+  - Use AWS STS to retrieve credentials and impersonate the IAM role you have access to (AssumeRole API).
+  - Temporary credentials can be valid between 15 minutes to 1 hour.
+
 
 
 
