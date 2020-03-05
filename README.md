@@ -207,6 +207,48 @@ Domain|% of Examinations
 #### SNS
 #### Kinesis
 #### AWS CLI, IAM Roles & Policies
+#### Cloudformation
+- Parameters:
+  - Reference a parameter: `!Ref ParameterName/ResourceName`
+  - Pseudo Parameters:
+    Reference Value | Example Reture Value
+    |:---|:---|
+    |AWS::AccountId| 1234567890
+    |AWS::NotificationARNs| [arn:aws:sns:us-east-1:12345670:MyTopic]|
+    |AWS::NoValue|Does not return a value|
+    |AWS::Region|us-east-2|
+    |AWS::StackId| arn:aws:cloudformation:us-east-1:123456789:stack/Mystack/1xw-32423-1234-5f-2323fa|
+    |AWS::StackName| MyStack|
+- Mappings
+  - Accessing Mappings Value: `!FindInMap [ MapName, TopLevelKey, SecondLevelKey ]`
+- Outputs:
+  - You can't delete a CloudFormation Stack if its outputs are being referenced by another CloudFormation stack.
+  - Cross stack reference: `!ImportValue outputName`.
+- Conditions:
+  - Instrinsic function (logical):
+    - Fn:Add
+    - Fn::Equals
+    - Fn::If
+    - Fn::Not
+    - Fn::Or      
+- Intrinsic Functions:
+  - Fn::Ref (!Ref): can be leveraged to reference
+    - Parameters: returns the value of the parameter
+    - Resources: returns the physical ID of the underlying resource (ex: EC2 ID)
+  - Fn::GetAtt:
+    - Get attributes attached to resources you create (e.g Availablility Zone/ Instance Type of an EC2 instance)
+  - Fn::FindInMap:
+    - Return a named value from a specific key.
+    - `!FindInMap [ MapName, TopLevelKey, SecondLevelKey ]`
+  - Fn::ImportValue
+    - Import values that are exported in other templates.
+    - `!ImportValue exportedName`
+  - Fn::Join
+    - Join values with a delimiter
+    - `!Join [ delimiter, [ comma-delimited list of values]]`
+  - Fn::Sub
+    - Used to substitute variables from a text.
+    - !
 ---
 
 ### **Monitoring**
