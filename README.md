@@ -204,6 +204,53 @@ Domain|% of Examinations
 #### DynamoDB
 #### API Gateway & Cognito
 #### SQS
+- Min: 1 msg/sec to 10,000 msg/sec
+- Retention:
+  - Default: 4 days
+  - Maximum: 14 days
+- No of messages in a queue: no limit
+- Can have duplicate messages (at least one message)
+- Can have out of order messages.
+- **Size of messages:** 256KB
+- **Delay queue:**
+  - Default delay: 0 seconds
+  - Maximum delay (Consumers don't see it immediately): 15 minutes
+  - Can set a default at queue level
+  - Can override the default using the DelaySeconds parameter.
+- **Producing messages**
+  - Sent Message structure:
+    - Body (up to 256KB - compulsory).
+    - Message attributes (metadata - optional)
+    - Delay delivery (optional)
+  - Response:
+    - Message identifier
+    - MD5 hash of the body
+- **Consuming Messages:**
+  - Poll SQS for messages (receive up to 10 messages at a time).
+  - Process the message within the visibility timeout.
+  - Delete the message using the message ID and receipt handle
+- **Dead Letter Queue:**
+  - Where the messages go after the number of failures exceeds the threshold.
+- **Long Polling:**
+  - Decreases the number of API calls made to SQS while
+  - Long polling can be enabled at the queue level or at the API level using **WaitTimeSeconds**
+- **FIFO Queue:**
+  - Lower throughput (up to 3,000 per second )
+- **Sending Large Message:**
+  - Using the SQS Extended Client (Java Library): Sending the large message to S3 and send the metadata via SQS Queue to the Consumer to let the consumer know where to get the message on S3.
+- **Security:**
+  - HTTPS: Encryption in flight.
+  - SSE (Server-Side Encryption) using KMS:
+    - CMK available
+    - Can set data key reuse period (1 min -> 24 hours)
+    - Only encrypt the body, not the metadata (message ID, timestamp, attributes)
+  - IAM policy must allow usage of SQS.
+  - No VPC Endpoint, must have internet access to access SQS.
+- **Must-known API:**
+  - CreateQueue, DeleteQueue
+  - **PurgeQueue:** delete all the message in queue.
+  - **SendMessage, ReceiveMessage, DeleteMessage**
+  - Batch APIs for **SendMessage, DeleteMessage, ChangeMessageVisibility** helps decrease your costs. 
 #### SNS
 #### Kinesis
 #### AWS CLI, IAM Roles & Policies
