@@ -76,6 +76,15 @@ Domain|% of Examinations
   - *Installing your app ahead of time (for faster deploys when auto-scaling)*
   - *Built for a specific AWS region*
 - **CPU Credits:** allow your instance to burst, credits are lost when bursting and earned when not bursting.  
+- **Elastic Network Interfaces (ENI)**:
+  - Logical component in a VPC that represents a **virtual network card**.
+  - The ENI can have the following attributes:
+    - Primary private IPv4, one or more secondary IPv4.
+    - One Elastic IP (IPv4) per private IPv4.
+    - One Public IPv4.
+    - One or more security groups.
+    - A MAC address.
+  - You can create ENI independently and attach them on the fly (move them) on EC2 instances for failover.
 #### IAM
 - Group > User > Role > Policy.
 - Use *Role* that has the only neccessary policies to give permissions to EC2 instances.
