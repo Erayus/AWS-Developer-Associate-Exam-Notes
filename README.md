@@ -114,9 +114,9 @@ Domain|% of Examinations
   - Network load balancers (Layer 4) allow to do:
     - Forward TCP traffic to your instances.
     - Handle millions of request per seconds.
-    - Support for static IP or elastic IP addresses.
+    - Has one static IP per AZ and support assigning  elastic IP (helpful for whitelisting specific IP).
     - Less latency ~ 100 ms (vs 400ms for ALB)
-    - Mostly used for extreme performance.
+    - Mostly used for extreme performance, TCP or UDP traffic.
 - Good to know:
   - Any LB has a static host name. Do not resolve and use underlying IP.
   - LBs can scale but not instantaneously - contact AWS for a "warm-up".
@@ -179,7 +179,7 @@ Domain|% of Examinations
 
 - Snapshots:
   - Used to backup EBS Volumes.
-  - Only tak the actual space of the blocks on the volume.
+  - Only take the actual space of the blocks on the volume.
     - If you snapshot a 100GB drive that only has 5 GB of data, then your EBS snapshot will only be 5GB.
 
 
