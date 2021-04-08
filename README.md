@@ -6,14 +6,14 @@
 
 ## Exam Domain and % of Examination
 
-Domain|% of Examinations
-|:----|:----------------:|
-| Domain 1: Deployment | 22% |
-| Domain 2: Security | 26% |
-| Domain 3: Developement with AWS Services | 30% |
-| Domain 4: Refractoring | 10% |
-| Domain 5: Monitoring and Troubleshooting | 12 % |
-| **TOTAL** | **100%** |
+| Domain                                   | % of Examinations |
+| :--------------------------------------- | :---------------: |
+| Domain 1: Deployment                     |        22%        |
+| Domain 2: Security                       |        26%        |
+| Domain 3: Developement with AWS Services |        30%        |
+| Domain 4: Refractoring                   |        10%        |
+| Domain 5: Monitoring and Troubleshooting |       12 %        |
+| **TOTAL**                                |     **100%**      |
 
 **Domain 1: Deployment**
 - Deploy written code in AWS using existing CI/CD pipelines, processes, and patterns. 
@@ -212,38 +212,68 @@ Domain|% of Examinations
 
 #### EBS
 - Network drive
-  - Uses the network to communicate with teh instance, which means there might be a bit of latency.
+  - Uses the network to communicate with the instance, which means there might be a bit of latency.
   - Can be detached from an EC2 instance and attached to to another one quickly.
-
-
 - Locked to an AZ
   - An EBS Volume in us-east-1a cannot be attached to us-east-1b
-  - To move a volume accross, you first need to snapshot it.
-
-
+  - To move a volume across, you first need to snapshot it.
 - Have a provisioned capacity (size in GBs, and IOPS)
   - You get billed for all the provisioned capacity.
-  - You can increase the capcity of the drive over time.
-
-
+  - You can increase the capacity of the drive over time.
 - Types:
-  - GP2(SSD): General purpose SSD volume that balances price and performance for a wide variety of workloads.
-  - IOI (SSD): Highest-performance SSD volume for mission-critical low-latency or high-throughput workloads.
+  - GP2(SSD): General purpose SSD volume that balances price and performance for a wide variety of workloads. IO increases if the disk size increases.
+  - IOI (SSD): Highest-performance SSD volume for mission-critical low-latency or high-throughput workloads. Can increase IO independently.
   - STI (HDD): Low cost HDD volume designed for frequently accessed, throughput-intensive workloads.
   - SCI (HDD): Lowest cost HDD volume designed for less frequently accessed workloads.
-
-
 - Snapshots:
   - Used to backup EBS Volumes.
   - Only take the actual space of the blocks on the volume.
     - If you snapshot a 100GB drive that only has 5 GB of data, then your EBS snapshot will only be 5GB.
-
-
+- To migrate an EBS volume across AZ:
+  - Take a snapshot.
+  - Restore the snapshot to another AZ.
+  - EBS backups use IO and you shouldn't run them while your application is handling a lot of traffic.
+  ![picture 3](images/1a4e82259008a3ed5e3785808801161b3a9c0a8027c048f66d2a1956b7392d68.png)  
+- Root EBS Volume of instance get terminated by default if the EC2 instance gets terminated. (you can disable that).
 - Extra notes:
   - Can only be attached to only one instance at a time.
   - Migrating across AZ: Snapshot -> recreate in a different AZ.
   - Root EBS Volume of instances get terminated by default if the EC2 instance gets terminated (You can disable that). 
 
+#### Instance Store
+- Some instances do not come with Root EBS volumes.
+- Instead, they come with "Instance Store" (= emphemeral storage).
+- Instance store is physically attached to the machine (EBS is a network drive).
+- Block Storage (just like EBS).
+- Pros:
+  - Very high IOPS (because physical).
+  - Good for buffer / cache / scratch data / temporary content.
+  - Data survives reboots.
+- Cons:
+  - On stop or termination, the instance store is lost.
+  - You can't resize the instance store.
+  - Backups must be operated by the user.
+#### EFS:
+- Use cases: content management, web serving, data sharing, WordPress.
+- Uses NFSv4.1 protocol.
+- Uses security group to control access to EFS.
+- Encryption at rest using KMS.
+- Mounting 100s of instances across AZ.
+- EFS share website files (WordPress).
+- Only for Linux instances (POSIX).
+- EFS has a higher price point than EBS.
+- Can leverage EFS-IA for cost savings.
+![picture 4](images/45c063c4ff75f864bd5c33764ad7f01037051c27532b336f4f455cbcb882002e.png)  
+- **EFS - Performance & Storage Classes**.
+  - **EFS Scale:**
+    - 1000s of concurrent NFS clients, 10GB+ /s throughput.
+    - Grow to Petabyte-scale network file system, automatically.
+  - **Performance mode (set at EFS creation time)**
+    - **General purpose (default):** latency-sensitive use cases (web server, CMS, etc...).
+    - **Max/IO:** Higher latency, throughput, high parallel (big data, media processing)
+  - **Storage Tiers (lifecycle management feature - move file after N days)**
+    - **Standard**: for frequently accessed files.
+    - **Infrequent access **(EFS-IA): cost to retrieve files, lower price to store.
 
 #### Route53
 #### RDS
@@ -323,14 +353,14 @@ Domain|% of Examinations
 - Parameters:
   - Reference a parameter: `!Ref ParameterName/ResourceName`
   - Pseudo Parameters:
-    Reference Value | Example Reture Value
-    |:---|:---|
-    |AWS::AccountId| 1234567890
-    |AWS::NotificationARNs| [arn:aws:sns:us-east-1:12345670:MyTopic]|
-    |AWS::NoValue|Does not return a value|
-    |AWS::Region|us-east-2|
-    |AWS::StackId| arn:aws:cloudformation:us-east-1:123456789:stack/Mystack/1xw-32423-1234-5f-2323fa|
-    |AWS::StackName| MyStack|
+    | Reference Value       | Example Reture Value                                                              |
+    | :-------------------- | :-------------------------------------------------------------------------------- |
+    | AWS::AccountId        | 1234567890                                                                        |
+    | AWS::NotificationARNs | [arn:aws:sns:us-east-1:12345670:MyTopic]                                          |
+    | AWS::NoValue          | Does not return a value                                                           |
+    | AWS::Region           | us-east-2                                                                         |
+    | AWS::StackId          | arn:aws:cloudformation:us-east-1:123456789:stack/Mystack/1xw-32423-1234-5f-2323fa |
+    | AWS::StackName        | MyStack                                                                           |
 - Mappings
   - Accessing Mappings Value: `!FindInMap [ MapName, TopLevelKey, SecondLevelKey ]`
 - Outputs:
