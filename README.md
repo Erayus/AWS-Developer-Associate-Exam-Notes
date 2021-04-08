@@ -94,7 +94,7 @@ Domain|% of Examinations
 
 #### ELB
 - Load balancers are servers that forward internet traffic to multiple servers (EC2 Instances) downstream.
-- Why?:
+- **Why?:**
   - Spread load across multiple downstream instances.
   - Expose a single point of access (DNS) to your application.
   - Seamlessly handle failures of downstream instances: LB does regular health checks to your instances and stop sending traffic to unhealthy instances.
@@ -102,7 +102,7 @@ Domain|% of Examinations
   - Enforce stickness with cookies: allows the user to talk to the same instance.
   - High availability cross zones.
   - Separate public traffic from private traffic.
-- Types:
+- **Types:**
   - Application Load Balancer (v2 - new generation)
     - Load balance to multiple HTTP applications across machines (target groups).
     - Load balance to multiple applications on the same machine (ex: containers).
@@ -117,13 +117,53 @@ Domain|% of Examinations
     - Has one static IP per AZ and support assigning  elastic IP (helpful for whitelisting specific IP).
     - Less latency ~ 100 ms (vs 400ms for ALB)
     - Mostly used for extreme performance, TCP or UDP traffic.
-- Good to know:
+- **Load Balancer Stickiness:**
+    - It is possible to implement stickiness so that the same client is always redirected to the same instance behind a load balancer.
+    - This works for Classic Load Balancers & Application Load Balancers.
+    - The "cookie" used for stickiness has an expiration date you control.
+    - **Use case:** make sure the user doesn't lose his session data.
+    - Enabling stickiness may bring imbalance to the load over the backend EC2 instances.
+- **Cross-Zone Load Balancing:**
+    ![picture](images/a666c1d2ef3c369ef87ba3b9a9fbf0449f9df78b6c2e1f05542242a0c26a0b3e.png)
+    - Each load balancer instance distributes evenly across all registered instance in all AZ.
+    - Otherwise, each load balancer node distributes requests evenly across the registered instances in its AZ only.
+    - Classic Load Balancer:
+      - Disabled by default.
+      - No charges for inter AZ data if enabled.
+    - Application Load Balancer:
+      - Always on (can't be disabled).
+      - No charges for inter AZ data.
+    - Network Load Balancer:
+      - Disabled by default.
+      - You pay charges($) for inter AZ data if enabled.
+- **ELB - SSL/TLS:**
+  - An SSL certificate allows traffic between your clients and your load balancer to be encrypted in transit (in-flight encryption).
+  - **Server Name Indication (SNI):**
+    - SNI solves the problem of loading multiple SSL certificates onto one web server (to serve multiple websites).
+    - It's a "newer protocol, and requires the client to indicate the hostname of the target server in the initial SSL Handshake.
+    - The server will then find the correct certificate, or return the default one.
+    - **Note:**
+      - Only works for ALB & NLB (newer generation), Cloudfront.
+      - Does not work for CLB (older gen) => Must use multiple CLB for multiple hostname with multiple SSL certificates.
+  ![picture](images/bfe6bded6013bbc9d36ebf8fcc52af8697cecb5d272c81f1a86fc7f7d6001ca1.png)  
+- ELB - Connection Draining
+  - Feature naming:
+    - CLB: Connection draining.
+    - Target Group: Deregistration Delay (for ALB & NLB).
+  - Time to complete "in-flight requests" while the instance is de-registering or unhealthy.
+  - Stops sending new requests to the instance which de-registering.
+  - Between 1 to 3600 seconds., default is 300 seconds.
+  - Can be disabled (set value to 0).
+  - Use case: Set to a low value if your requests are short (e.g web requests), or set to a high value if your requests are long (e.g data processing requests) so that the existing requests can complete before the instance is de-registered.
+  ![picture](images/abe3edbc2494766edf9dfeedb7f28bf5c823fcda19717d84315bfdc660564eaf.png)  
+
+- **Good to know:**
   - Any LB has a static host name. Do not resolve and use underlying IP.
   - LBs can scale but not instantaneously - contact AWS for a "warm-up".
   - NLB directly see the client IP.
   - 4xx errors are client induced errors.
-  - 5xx erros are application induced errors.
-    - Load Balancer Errors 503 meants at capacity or no registered target.
+  - 5xx errors are application induced errors.
+    - Load Balancer Errors 503 meant at capacity or no registered target.
   - If the LB can't connect to your application, check your security groups.
 #### ASG
 - What:
@@ -131,7 +171,7 @@ Domain|% of Examinations
   - Scale in (remove EC2 instances) to match a decreased load.
   - Ensure we have a minimum and a maximum number of machines running.
   - Automatically Register new instances to a load balancer.
-- Launch confguration:
+- Launch configuration:
   - An "instruction" the ASG use to create the instances.
   - Details:
     - AMI + Instance Type
@@ -148,11 +188,27 @@ Domain|% of Examinations
     1. Send custom metric from application on EC2 to CloudWatch (PutMetric API).
     2. Create CloudWatch alarm to react to low/high values.
     3. Use the CloudWatch alarm as the scaling policy for ASG.
+- Scaling Policies:
+  - **Target Tracking Scaling:**
+    - Most simple and easy to set up.
+    - Example: I want the average ASG CPU to stay at around 40%.
+  - **Simple / Step Scaling:**
+    - When a CloudWatch alarm is triggered (example CPU > 70%), then add 2 units.
+    - When a CloudWatch alarm is triggered (example CPU < 30%>), then remove 1.
+  - **Scheduled Actions:**
+    - Anticipate a scaling based on known usage patterns.
+    - Example: increase the min capacity to 10 at 5 pm on Fridays.
+  - Scaling Cooldowns:
+    - The cooldown period helps to ensure that your ASG doesn't launch or terminate additional instance before the previous scaling activity takes effect.
+    - In addition to default cooldown for ASG, we can create cooldowns that apply to a specific simple scaling policy.
+    - A scaling-specific cooldown period overrides the default cooldown period.
+    - One common use for scaling-specific cooldown is with a scale-in policy terminates instances, Amazon EC2 Auto Scaling needs less time to determine whether to terminate additional instances
+    - If the default cooldown period of 300 seconds is too long -- you can reduce costs by applying a scaling-specific cooldown period of 180 seconds to the scale-in policy.
+    - If your application is scaling up and down multiple times each hour, modify the Auto Scaling Groups cool-down timers and the CloudWatch Alarms Period that triggers the scale in.
 - Extra notes:
   - Update ASG by providing a new launch configuration.
   - IAM roles attached to an ASG will get assigned to EC2 instances.
-  - ASG are free. You pay for the underlying resourcse being launched.
-
+  - ASG are free. You pay for the underlying resources being launched.
 
 #### EBS
 - Network drive
